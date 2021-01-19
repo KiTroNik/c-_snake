@@ -29,19 +29,19 @@ void CSnake::paint() {
     printl("o");
 
     if (help) print_help();
+    if (game_over) print_end_game();
 
     napms (120 - 5 * (snake.size() / 3));
 }
 
 bool CSnake::handleEvent(int key) {
     if (key == '\t') return false;
-    if (game_over == true) reset_game();
     if (key == 'r') reset_game();
     if (key == 'p') pause = !pause;
     if (key == 'h') help = !help;
     
 
-    if (pause == false && help == false) {
+    if (pause == false && help == false && game_over == false) {
         switch (key) {
         case KEY_UP:
             if (previous_key.y == 1) return false;
@@ -86,14 +86,13 @@ void CSnake::move(const CPoint & delta) {
         snake.push_back(CPoint(snake[snake.size()-1].x, snake[snake.size()-1].y));
     }
 
-    for (int i = 1; i < snake.size(); i++) {
+    for (unsigned int i = 1; i < snake.size(); i++) {
         if (snake[i].x == snake[0].x && snake[i].y == snake[0].y) {
             game_over = true;
             break;
         }
     }
     
-
     if (snake.front().y == geom.topleft.y) {
         snake.front() = CPoint(snake.front().x, geom.size.y + geom.topleft.y - 2);
     } else if (snake.front().y == geom.size.y + geom.topleft.y - 1) { 
@@ -107,7 +106,8 @@ void CSnake::move(const CPoint & delta) {
 
 void CSnake::rand_apple() {
     int is_git = 0;
-    int x, y, pos;
+    int x, y;
+    unsigned int pos;
     while (is_git != 1) {
         pos = 0;
         x = (geom.topleft.x + 1) + rand() % ((geom.topleft.x + geom.size.x - 1) - (geom.topleft.x + 1));
@@ -146,4 +146,9 @@ void CSnake::print_help() {
     printl("arrows - move snake (in play mode) or");
     gotoyx(geom.topleft.y + 9, geom.topleft.x + 10);
     printl("move window (in pause mode)");
+}
+
+void CSnake::print_end_game() {
+    gotoyx(geom.topleft.y + 1, geom.topleft.x + 1);
+    printl("GAME OVER, result: %d", snake.size() - 3);
 }

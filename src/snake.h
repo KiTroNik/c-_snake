@@ -25,6 +25,7 @@ class CSnake:public CFramedWindow {
     void rand_apple();
     void reset_game();
     void print_help();
+    void print_end_game();
 };
 
 #endif
