@@ -21,11 +21,12 @@ class CSnake:public CFramedWindow {
 
     void paint();
     bool handleEvent(int key);
-    void move (const CPoint & delta);
+    void move_snake (const CPoint & delta);
     void rand_apple();
     void reset_game();
     void print_help();
     void print_end_game();
+    void update_snake(int key);
 };
 
 #endif

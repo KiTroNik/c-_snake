@@ -30,51 +30,53 @@ void CSnake::paint() {
 
     if (help) print_help();
     if (game_over) print_end_game();
-
-    napms (120 - 5 * (snake.size() / 3));
 }
 
 bool CSnake::handleEvent(int key) {
+    napms (120 - 5 * (snake.size() / 3));
     if (key == '\t') return false;
     if (key == 'r') reset_game();
     if (key == 'p') pause = !pause;
     if (key == 'h') help = !help;
-    
 
     if (pause == false && help == false && game_over == false) {
         switch (key) {
         case KEY_UP:
             if (previous_key.y == 1) return false;
             previous_key = CPoint(0, -1);
-            move(previous_key);
+            move_snake(previous_key);
             return true;
         case KEY_DOWN:
             if (previous_key.y == -1) return false;
             previous_key = CPoint(0, 1);
-            move(previous_key);
+            move_snake(previous_key);
             return true;
         case KEY_LEFT:
             if (previous_key.x == 1) return false;
             previous_key = CPoint(-1, 0);
-            move(previous_key);
+            move_snake(previous_key);
             return true;
         case KEY_RIGHT:
             if (previous_key.x == -1) return false;
             previous_key = CPoint(1, 0);
-            move(previous_key);
+            move_snake(previous_key);
             return true;
         default:
-            move(previous_key);
+            move_snake(previous_key);
             return true;
         }
     } else if (help == true) {
+        update_snake(key);
+        CFramedWindow::handleEvent(key);
         return true;
     } else {
+        update_snake(key);
+        CFramedWindow::handleEvent(key);
         return true;
     }
 }
 
-void CSnake::move(const CPoint & delta) {
+void CSnake::move_snake(const CPoint & delta) {
 
     for (int i = snake.size(); i >= 1; i--) {
         snake[i] = snake[i - 1];
@@ -151,4 +153,30 @@ void CSnake::print_help() {
 void CSnake::print_end_game() {
     gotoyx(geom.topleft.y + 1, geom.topleft.x + 1);
     printl("GAME OVER, result: %d", snake.size() - 3);
+}
+
+void CSnake::update_snake(int key) {
+    CPoint dir;
+    switch (key){
+        case KEY_UP:
+            dir = CPoint(0, -1);
+            break;
+        case KEY_DOWN:
+            dir = CPoint(0, 1);
+            break;
+        case KEY_LEFT:
+            dir = CPoint(-1, 0);
+            break;
+        case KEY_RIGHT:
+            dir = CPoint(1, 0);
+            break;
+        default:
+            return;
+    }
+
+    for (unsigned int i = 0; i < snake.size(); i++) {
+        snake[i] += dir;
+    }
+
+    apple += dir;
 }
