@@ -9,7 +9,6 @@ class CSnake:public CFramedWindow {
   private:
     list<CPoint> snake;
     CPoint apple;
-    CPoint head;
     CPoint previous_key;
   public:
     CSnake(CRect r, char _c = ' ');

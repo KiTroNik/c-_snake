@@ -160,6 +160,8 @@ void CDesktop::run() {
   while(1) {
     int c = getEvent();
 
+    flushinp();
+
     if(c == 'q' || c == 'Q')
       break;
 
