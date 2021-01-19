@@ -7,6 +7,10 @@ CSnake::CSnake(CRect r, char _c /*=' '*/): CFramedWindow(r, _c)
     snake.push_back(CPoint(geom.topleft.x+4, geom.topleft.y+4));
     snake.push_back(CPoint(geom.topleft.x+3, geom.topleft.y+3));
     apple = CPoint(geom.topleft.x + 15, geom.topleft.y + 15);
+
+    game_over = false;
+    pause = false;
+    help = true;
 }
 
 void CSnake::paint() {
@@ -23,11 +27,15 @@ void CSnake::paint() {
 }
 
 bool CSnake::handleEvent(int key) {
-    if (key == '\t') {
-      return false;
+    if (key == '\t') return false;
+    if (game_over == true) reset_game();
+    if (key == 'r') reset_game();
+    if (key == 'p') {
+        pause = !pause;
     }
 
-    switch (key) {
+    if (pause == false) {
+        switch (key) {
         case KEY_UP:
             if (previous_key.y == 1) return false;
             previous_key = CPoint(0, -1);
@@ -51,6 +59,9 @@ bool CSnake::handleEvent(int key) {
         default:
             move(previous_key);
             return true;
+        }
+    } else {
+        return true;
     }
 }
 
@@ -60,6 +71,19 @@ void CSnake::move(const CPoint & delta) {
         snake[i] = snake[i - 1];
     }
     snake[0] += delta;
+
+    if (snake[0].x == apple.x && snake[0].y == apple.y) {
+        rand_apple();
+        snake.push_back(CPoint(snake[snake.size()-1].x, snake[snake.size()-1].y));
+    }
+
+    for (int i = 1; i < snake.size(); i++) {
+        if (snake[i].x == snake[0].x && snake[i].y == snake[0].y) {
+            game_over = true;
+            break;
+        }
+    }
+    
 
     if (snake.front().y == geom.topleft.y) {
         snake.front() = CPoint(snake.front().x, geom.size.y + geom.topleft.y - 2);
@@ -87,4 +111,17 @@ void CSnake::rand_apple() {
         if (pos == snake.size()) is_git = 1;
     }
     apple = CPoint(x, y);
+}
+
+void CSnake::reset_game() {
+    snake.clear();
+    previous_key = CPoint(1, 0);
+    snake.push_back(CPoint(geom.topleft.x+5, geom.topleft.y+5));
+    snake.push_back(CPoint(geom.topleft.x+4, geom.topleft.y+4));
+    snake.push_back(CPoint(geom.topleft.x+3, geom.topleft.y+3));
+    apple = CPoint(geom.topleft.x + 15, geom.topleft.y + 15);
+
+    game_over = false;
+    pause = false;
+    help = true;
 }

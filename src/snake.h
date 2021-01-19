@@ -23,6 +23,7 @@ class CSnake:public CFramedWindow {
     bool handleEvent(int key);
     void move (const CPoint & delta);
     void rand_apple();
+    void reset_game();
 };
 
 #endif
