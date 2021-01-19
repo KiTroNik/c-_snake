@@ -15,6 +15,10 @@ CSnake::CSnake(CRect r, char _c /*=' '*/): CFramedWindow(r, _c)
 
 void CSnake::paint() {
     CFramedWindow::paint();
+
+    gotoyx(geom.topleft.y - 1, geom.topleft.x);
+    printl("| LEVEL %d |", snake.size()/3);
+
     gotoyx(snake[0].y, snake[0].x);
     printl("*");
     for (unsigned int i = 1; i < snake.size(); i++) {
@@ -23,6 +27,9 @@ void CSnake::paint() {
     }
     gotoyx(apple.y, apple.x);
     printl("o");
+
+    if (help) print_help();
+
     napms (120 - 5 * (snake.size() / 3));
 }
 
@@ -30,11 +37,11 @@ bool CSnake::handleEvent(int key) {
     if (key == '\t') return false;
     if (game_over == true) reset_game();
     if (key == 'r') reset_game();
-    if (key == 'p') {
-        pause = !pause;
-    }
+    if (key == 'p') pause = !pause;
+    if (key == 'h') help = !help;
+    
 
-    if (pause == false) {
+    if (pause == false && help == false) {
         switch (key) {
         case KEY_UP:
             if (previous_key.y == 1) return false;
@@ -60,6 +67,8 @@ bool CSnake::handleEvent(int key) {
             move(previous_key);
             return true;
         }
+    } else if (help == true) {
+        return true;
     } else {
         return true;
     }
@@ -124,4 +133,17 @@ void CSnake::reset_game() {
     game_over = false;
     pause = false;
     help = true;
+}
+
+void CSnake::print_help() {
+    gotoyx(geom.topleft.y + 5, geom.topleft.x + 3);
+    printl("h - toggle help information");
+    gotoyx(geom.topleft.y + 6, geom.topleft.x + 3);
+    printl("p - toggle pause/play mode");
+    gotoyx(geom.topleft.y + 7, geom.topleft.x + 3);
+    printl("r - restart game");
+    gotoyx(geom.topleft.y + 8, geom.topleft.x + 3);
+    printl("arrows - move snake (in play mode) or");
+    gotoyx(geom.topleft.y + 9, geom.topleft.x + 10);
+    printl("move window (in pause mode)");
 }

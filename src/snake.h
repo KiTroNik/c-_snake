@@ -24,6 +24,7 @@ class CSnake:public CFramedWindow {
     void move (const CPoint & delta);
     void rand_apple();
     void reset_game();
+    void print_help();
 };
 
 #endif
